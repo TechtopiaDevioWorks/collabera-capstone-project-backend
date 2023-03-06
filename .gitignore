@@ -1,0 +1,36 @@
+# .NET Core
+*.dll
+*.exe
+*.pdb
+*.dll.config
+*.exe.config
+*.user
+*.builds
+*.publishsettings
+bin/
+obj/
+Debug/
+Release/
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+# Visual Studio Code
+.vscode/
+# NuGet Packages Directory
+*.nupkg
+packages/
+# Others
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.swp
+Thumbs.db
+[Tt]humbs.db
+*.DS_Store
+db-docker/data/*

@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  db:
+    image: mysql
+    container_name: dev-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    ports:
+      - "6603:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: devpassroot
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_user_password
+      MYSQL_DATABASE: otm
+    volumes:
+      - type: bind
+        source: ./data
+        target: /var/lib/mysql
+      - type: bind
+        source: ./config
+        target: /etc/mysql/conf.d
+      - type: bind
+        source: ./init
+        target: /docker-entrypoint-initdb.d
+  phpmyadmin:
+    depends_on:
+      - "db"
+    links:
+      - db
+    image: phpmyadmin
+    container_name: dev-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_host: db
+      PMA_port: 3306
+      PMA_arbitrary: 1
