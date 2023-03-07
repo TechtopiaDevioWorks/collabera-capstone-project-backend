@@ -1,5 +1,5 @@
 namespace WebApi.Services;
-
+using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using BCrypt.Net;
 using WebApi.Entities;

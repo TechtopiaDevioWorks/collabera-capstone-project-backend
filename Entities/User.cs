@@ -1,8 +1,6 @@
 namespace WebApi.Entities;
 
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
