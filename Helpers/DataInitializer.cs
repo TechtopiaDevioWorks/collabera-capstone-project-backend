@@ -28,7 +28,7 @@ public static class DbInitializer
         {
             return;
         }
-        context.Users.Add(new WebApi.Entities.User { id = 1, username="admin", firstname = "admin", lastname = "admin", email = "admin@admin.adm", token = "default", password = BCrypt.Net.BCrypt.HashPassword("admin"), role=roles[2] });
+        context.Users.Add(new WebApi.Entities.User { id = 1, username="admin", firstname = "admin", lastname = "admin", email = "admin@admin.adm", token = "default", password = BCrypt.Net.BCrypt.HashPassword("admin"), Role=roles[2] });
         context.SaveChanges();
 
         //Applies any pending migrations for the context to the database.Will create the database if it does not already exist.

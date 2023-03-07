@@ -2,6 +2,7 @@ namespace WebApi.Helpers;
 
 using Microsoft.EntityFrameworkCore;
 using WebApi.Entities;
+using System.Linq;
 
 public class DataContext : DbContext
 {
@@ -16,6 +17,11 @@ public class DataContext : DbContext
     {
         var connectionString = Configuration.GetConnectionString("DefaultConnection");
         options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+
     }
 
     public DbSet<User> Users { get; set; }

@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Users;
 using WebApi.Services;
+using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("[controller]")]

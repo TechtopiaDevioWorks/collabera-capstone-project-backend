@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using WebApi.Helpers;
 using WebApi.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 var builder = WebApplication.CreateBuilder(args);
 
 // add services to DI container
@@ -12,11 +14,12 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddCors();
     services.AddControllers().AddJsonOptions(x =>
     {
-        // serialize enums as strings in api responses (e.g. Role)
+        // serialize enums as strings in api responses
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
         // ignore omitted parameters on models to enable optional params (e.g. User update)
         x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

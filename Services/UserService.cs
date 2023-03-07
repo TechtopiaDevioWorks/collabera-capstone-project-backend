@@ -5,6 +5,8 @@ using BCrypt.Net;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Models.Users;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 public interface IUserService
 {
@@ -30,7 +32,7 @@ public class UserService : IUserService
 
     public IEnumerable<User> GetAll()
     {
-        return _context.Users;
+        return _context.Users.Include(u => u.Role).Include(u =>u.Team);
     }
 
     public User GetById(int id)
