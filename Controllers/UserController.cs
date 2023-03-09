@@ -2,24 +2,23 @@ namespace WebApi.Controllers;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Models.Users;
+using WebApi.Models.User;
 using WebApi.Services;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController : ControllerBase
+public class UserController : ControllerBase
 {
     private IUserService _userService;
     private IMapper _mapper;
 
-    public UsersController(
+    public UserController(
         IUserService userService,
         IMapper mapper)
     {
         _userService = userService;
         _mapper = mapper;
-    }
-
+    }    
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -35,7 +34,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create(CreateRequest model)
+    public IActionResult Create(RegisterRequest model)
     {
         _userService.Create(model);
         return Ok(new { message = "User created" });

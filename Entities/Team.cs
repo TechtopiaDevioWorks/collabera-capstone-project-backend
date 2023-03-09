@@ -8,6 +8,8 @@ public class Team
     public byte id { get; set; }
     public string name { get; set; }
     
-    [JsonIgnore]
+
     public ICollection<User> Users { get; set; }
+
+    public ICollection<Invite> Invites { get; set; }
 }

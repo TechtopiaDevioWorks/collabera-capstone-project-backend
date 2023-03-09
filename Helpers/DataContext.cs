@@ -23,7 +23,8 @@ public class DataContext : DbContext
 
     }
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<Team> Teams { get; set; }
-    public DbSet<Role> Roles { get; set; }
+    public DbSet<User> User { get; set; }
+    public DbSet<Team> Team { get; set; }
+    public DbSet<Role> Role { get; set; }
+    public DbSet<Invite> Invite { get; set; }
 }

@@ -8,7 +8,7 @@ public static class DbInitializer
         context.Database.EnsureCreated();
 
         // Look for any roles.
-        if (context.Roles.Any())
+        if (context.Role.Any())
         {
             return;   // DB has been seeded
         }
@@ -21,14 +21,14 @@ public static class DbInitializer
         };
         foreach (WebApi.Entities.Role s in roles)
         {
-            context.Roles.Add(s);
+            context.Role.Add(s);
         }
         //Add default admin
-        if (context.Users.Any())
+        if (context.User.Any())
         {
             return;
         }
-        context.Users.Add(new WebApi.Entities.User { id = 1, username="admin", firstname = "admin", lastname = "admin", email = "admin@admin.adm", token = "default", password = BCrypt.Net.BCrypt.HashPassword("admin"), Role=roles[2] });
+        context.User.Add(new WebApi.Entities.User { id = 1, username="admin", firstname = "admin", lastname = "admin", email = "admin@admin.adm", token = "default", password = BCrypt.Net.BCrypt.HashPassword("admin"), Role=roles[2] });
         context.SaveChanges();
 
         //Applies any pending migrations for the context to the database.Will create the database if it does not already exist.

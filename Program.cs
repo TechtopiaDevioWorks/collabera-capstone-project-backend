@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using WebApi.Helpers;
 using WebApi.Services;
+using Microsoft.AspNetCore.OData;
 var builder = WebApplication.CreateBuilder(args);
 
 // add services to DI container
@@ -18,12 +19,13 @@ var builder = WebApplication.CreateBuilder(args);
         // ignore omitted parameters on models to enable optional params (e.g. User update)
         x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+    }).AddOData(options => options.Select().Filter().OrderBy().SetMaxTop(null).Count());
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
     // configure DI for application services
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<ITeamService, TeamService>();
+    services.AddScoped<IInviteService, InviteService>();
     DbInitializer.Initialize(context);
 }
 

@@ -2,17 +2,17 @@ namespace WebApi.Controllers;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Models.Teams;
+using WebApi.Models.Team;
 using WebApi.Services;
 
 [ApiController]
 [Route("[controller]")]
-public class TeamsController : ControllerBase
+public class TeamController : ControllerBase
 {
     private ITeamService _teamService;
     private IMapper _mapper;
 
-    public TeamsController(
+    public TeamController(
         ITeamService teamService,
         IMapper mapper)
     {

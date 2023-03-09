@@ -1,4 +1,4 @@
-namespace WebApi.Models.Users;
+namespace WebApi.Models.User;
 
 using System.ComponentModel.DataAnnotations;
 using WebApi.Entities;

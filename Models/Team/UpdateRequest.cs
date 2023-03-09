@@ -1,4 +1,4 @@
-namespace WebApi.Models.Teams;
+namespace WebApi.Models.Team;
 
 using System.ComponentModel.DataAnnotations;
 using WebApi.Entities;

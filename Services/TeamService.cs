@@ -4,7 +4,7 @@ using AutoMapper;
 using BCrypt.Net;
 using WebApi.Entities;
 using WebApi.Helpers;
-using WebApi.Models.Teams;
+using WebApi.Models.Team;
 
 public interface ITeamService
 {
@@ -30,7 +30,11 @@ public class TeamService : ITeamService
 
     public IEnumerable<Team> GetAll()
     {
-        return _context.Teams;
+        return _context.Team
+            .Include(team => team.Users)
+                .ThenInclude(user => user.Role)
+            .Include(team => team.Invites)
+                .ThenInclude(invite => invite.Role);
     }
 
     public Team GetById(int id)
@@ -41,12 +45,12 @@ public class TeamService : ITeamService
     public void Create(CreateRequest model)
     {
         // validate
-        if (_context.Teams.Any(x => x.name == model.name))
+        if (_context.Team.Any(x => x.name == model.name))
             throw new AppException("Team with the name '" + model.name + "' already exists");
         // map model to new user object
         var team = _mapper.Map<Team>(model);
         // save user
-        _context.Teams.Add(team);
+        _context.Team.Add(team);
         _context.SaveChanges();
     }
 
@@ -55,19 +59,19 @@ public class TeamService : ITeamService
         var team = getTeam(id);
 
         // validate
-        if (model.name != team.name && _context.Teams.Any(x => x.name == model.name))
+        if (model.name != team.name && _context.Team.Any(x => x.name == model.name))
             throw new AppException("Team with the name '" + model.name + "' already exists");
 
         // copy model to user and save
         _mapper.Map(model, team);
-        _context.Teams.Update(team);
+        _context.Team.Update(team);
         _context.SaveChanges();
     }
 
     public void Delete(int id)
     {
         var team = getTeam(id);
-        _context.Teams.Remove(team);
+        _context.Team.Remove(team);
         _context.SaveChanges();
     }
 
@@ -75,8 +79,9 @@ public class TeamService : ITeamService
 
     private Team getTeam(int id)
     {
-        var team = _context.Teams.Find(id);
+        var team = _context.Team.Find(id);
         if (team == null) throw new KeyNotFoundException("Team not found");
         return team;
     }
+
 }

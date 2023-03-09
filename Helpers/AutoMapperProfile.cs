@@ -8,10 +8,10 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         // CreateRequest -> User
-        CreateMap<WebApi.Models.Users.CreateRequest, User>();
+        CreateMap<WebApi.Models.User.CreateRequest, User>();
 
         // UpdateRequest -> User
-        CreateMap<WebApi.Models.Users.UpdateRequest, User>()
+        CreateMap<WebApi.Models.User.UpdateRequest, User>()
             .ForAllMembers(x => x.Condition(
                 (src, dest, prop) =>
                 {
@@ -26,10 +26,10 @@ public class AutoMapperProfile : Profile
                 }
             ));
         // CreateRequest -> Team
-        CreateMap<WebApi.Models.Teams.CreateRequest, Team>();
+        CreateMap<WebApi.Models.Team.CreateRequest, Team>();
 
         // UpdateRequest -> Team
-        CreateMap<WebApi.Models.Teams.UpdateRequest, Team>()
+        CreateMap<WebApi.Models.Team.UpdateRequest, Team>()
             .ForAllMembers(x => x.Condition(
                 (src, dest, prop) =>
                 {
@@ -39,5 +39,7 @@ public class AutoMapperProfile : Profile
                     return true;
                 }
             ));
+        // CreateRequest -> Invite
+        CreateMap<WebApi.Models.Invite.CreateRequest, Invite>();
     }
 }
