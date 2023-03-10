@@ -26,6 +26,8 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<ITeamService, TeamService>();
     services.AddScoped<IInviteService, InviteService>();
+    services.AddScoped<ITrainingService, TrainingService>();
+    services.AddScoped<ITrainingRegistrationService, TrainingRegistrationService>();
     DbInitializer.Initialize(context);
 }
 

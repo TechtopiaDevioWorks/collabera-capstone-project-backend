@@ -9,21 +9,22 @@ using WebApi.Models.Team;
 public interface ITeamService
 {
     IEnumerable<Team> GetAll();
-    Team GetById(int id);
+    Team GetById(byte id);
     void Create(CreateRequest model);
-    void Update(int id, UpdateRequest model);
-    void Delete(int id);
+    void Update(byte id, UpdateRequest model);
+    void Delete(byte id);
 }
 
 public class TeamService : ITeamService
 {
     private DataContext _context;
     private readonly IMapper _mapper;
-
+    private ISharedService _sharedService;
     public TeamService(
         DataContext context,
         IMapper mapper)
     {
+        _sharedService = new SharedService(context, mapper);
         _context = context;
         _mapper = mapper;
     }
@@ -37,9 +38,9 @@ public class TeamService : ITeamService
                 .ThenInclude(invite => invite.Role);
     }
 
-    public Team GetById(int id)
+    public Team GetById(byte id)
     {
-        return getTeam(id);
+        return _sharedService.getTeam(id);
     }
 
     public void Create(CreateRequest model)
@@ -54,9 +55,9 @@ public class TeamService : ITeamService
         _context.SaveChanges();
     }
 
-    public void Update(int id, UpdateRequest model)
+    public void Update(byte id, UpdateRequest model)
     {
-        var team = getTeam(id);
+        var team = _sharedService.getTeam(id);
 
         // validate
         if (model.name != team.name && _context.Team.Any(x => x.name == model.name))
@@ -68,20 +69,11 @@ public class TeamService : ITeamService
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(byte id)
     {
-        var team = getTeam(id);
+        var team = _sharedService.getTeam(id);
         _context.Team.Remove(team);
         _context.SaveChanges();
-    }
-
-    // helper methods
-
-    private Team getTeam(int id)
-    {
-        var team = _context.Team.Find(id);
-        if (team == null) throw new KeyNotFoundException("Team not found");
-        return team;
     }
 
 }

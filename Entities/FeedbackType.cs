@@ -3,16 +3,14 @@ using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Role
+public class FeedbackType
 {
     public byte id { get; set; }
-    
-    [StringLength(25, MinimumLength = 1)]
+
+    [StringLength(35, MinimumLength = 1)]
     public string name { get; set; }
 
     [JsonIgnore]
-    public ICollection<User> Users { get; set; }
+    public ICollection<Feedback> Feedbacks { get; set; }
 
-    [JsonIgnore]
-    public ICollection<Invite> Invites { get; set; }
 }

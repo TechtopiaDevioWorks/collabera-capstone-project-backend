@@ -2,40 +2,46 @@ namespace WebApi.Controllers;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Models.User;
+using WebApi.Models.Training;
 using WebApi.Services;
 
 [ApiController]
-//[Route("[controller]")]
-public class UserController : ControllerBase
+public class TrainingController : ControllerBase
 {
-    private IUserService _userService;
+    private ITrainingService _trainingService;
     private IMapper _mapper;
 
-    public UserController(
-        IUserService userService,
+    public TrainingController(
+        ITrainingService trainingService,
         IMapper mapper)
     {
-        _userService = userService;
+        _trainingService = trainingService;
         _mapper = mapper;
     }
 
-    [Route("user")]    
+    [Route("training")]    
     [HttpGet]
     public IActionResult GetAll([FromQuery] bool expand = false)
     {
-        var users = _userService.GetAll(expand);
-        return Ok(users);
+        var trainings = _trainingService.GetAll(expand);
+        return Ok(trainings);
+    }
+    [Route("training")]  
+    [HttpPost]
+    public IActionResult Create(CreateRequest model)
+    {
+        _trainingService.Create(model);
+        return Ok(new { message = "Training created" });
     }
 
-    [Route("user/{id}")]
+    [Route("training/{id}")]
     [HttpGet()]
     public IActionResult GetById([FromRoute] int id)
     {
-        var user = _userService.GetById(id);
-        return Ok(user);
+        var training = _trainingService.GetById(id);
+        return Ok(training);
     }
-
+/*
     [Route("login")]
     [HttpPut]
     public IActionResult Login(LoginRequest model) {
@@ -43,13 +49,6 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    [Route("user")]  
-    [HttpPost]
-    public IActionResult Create(RegisterRequest model)
-    {
-        _userService.Create(model);
-        return Ok(new { message = "User created" });
-    }
 
     [Route("user/{id}")]  
     [HttpPut]
@@ -57,13 +56,13 @@ public class UserController : ControllerBase
     {
         _userService.Update(id, model);
         return Ok(new { message = "User updated" });
-    }
+    }*/
 
-    [Route("user/{id}")]  
+    [Route("training/{id}")]  
     [HttpDelete]
     public IActionResult Delete(int id)
     {
-        _userService.Delete(id);
-        return Ok(new { message = "User deleted" });
+        _trainingService.Delete(id);
+        return Ok(new { message = "Training deleted" });
     }
 }

@@ -4,22 +4,21 @@ using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Attendance
+public class TrainingRegistration
 {
     public int id { get; set; }
 
-    [JsonIgnore, ForeignKey("User")]
+    [ForeignKey("User")]
     public int user_id { get; set; }
     public User User { get; set; }
 
-    [JsonIgnore, ForeignKey("Training")]
+    [ForeignKey("Training")]
     public int training_id { get; set; }
     public Training Training { get; set; }
 
-    public DateTime start { get; set; }
-    public DateTime end { get; set; }
+    public DateTime registration_date { get; set; }
 
-    [JsonIgnore, ForeignKey("Status")]
+    [ForeignKey("Status")]
     public byte status_id { get; set; }
-    public AttendanceStatus Status { get; set; }
+    public TrainingRegistrationStatus Status { get; set; }
 }

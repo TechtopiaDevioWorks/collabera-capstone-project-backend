@@ -28,7 +28,7 @@ public class TeamController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public IActionResult GetById(byte id)
     {
         var team = _teamService.GetById(id);
         return Ok(team);
@@ -42,14 +42,14 @@ public class TeamController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, UpdateRequest model)
+    public IActionResult Update(byte id, UpdateRequest model)
     {
         _teamService.Update(id, model);
         return Ok(new { message = "Team updated" });
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(byte id)
     {
         _teamService.Delete(id);
         return Ok(new { message = "Team deleted" });

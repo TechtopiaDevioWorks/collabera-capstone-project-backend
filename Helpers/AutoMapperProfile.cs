@@ -41,5 +41,11 @@ public class AutoMapperProfile : Profile
             ));
         // CreateRequest -> Invite
         CreateMap<WebApi.Models.Invite.CreateRequest, Invite>();
+
+        // CreateRequest -> Training
+        CreateMap<WebApi.Models.Training.CreateRequest, Training>();
+
+        // CreateRequest -> Training Registration
+        CreateMap<WebApi.Models.TrainingRegistration.CreateRequest, TrainingRegistration>();
     }
 }

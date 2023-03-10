@@ -14,13 +14,14 @@ public class RegisterRequest
     [Required, MaxLength(50)]
     public string lastname { get; set; }
 
-    [Required, MaxLength(50)]
+    [Required, MaxLength(255)]
     public string token {get;set;}
+
     [Required, MaxLength(50)]
     [EmailAddress]
     public string email { get; set; }
 
-    [Required, MinLength(6), MaxLength(50)]
+    [Required, MinLength(5), MaxLength(50)]
     public string password { get; set; }
 }
 

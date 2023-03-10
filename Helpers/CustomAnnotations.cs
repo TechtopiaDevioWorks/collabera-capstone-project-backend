@@ -19,10 +19,54 @@ public class RequiredIfNotAttribute : RequiredAttribute
         var otherPropertyValue = otherPropertyInfo.GetValue(instance, null);
         if (otherPropertyValue != null && !otherPropertyValue.Equals(_otherPropertyValue))
         {
-            
+
             return base.IsValid(value, validationContext);
         }
 
         return ValidationResult.Success;
+    }
+}
+public class DateTimeAfterCurrentDateAttribute : ValidationAttribute
+{
+    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    {
+        var dateTime = (DateTime)value;
+        if (dateTime > DateTime.Now)
+        {
+            return ValidationResult.Success;
+        }
+        return new ValidationResult($"Should be after current date and time.");
+    }
+
+}
+
+public class DateTimeAfterAttribute : ValidationAttribute
+{
+    private readonly string _otherPropertyName;
+
+    public DateTimeAfterAttribute(string otherPropertyName)
+    {
+        _otherPropertyName = otherPropertyName;
+    }
+
+    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    {
+        var otherPropertyInfo = validationContext.ObjectType.GetProperty(_otherPropertyName);
+        if (otherPropertyInfo == null)
+        {
+            return new ValidationResult($"Unknown property: {_otherPropertyName}");
+        }
+
+        var otherPropertyValue = (DateTime)otherPropertyInfo.GetValue(validationContext.ObjectInstance);
+        var thisPropertyValue = (DateTime)value;
+
+        if (thisPropertyValue > otherPropertyValue)
+        {
+            return ValidationResult.Success;
+        }
+        else
+        {
+            return new ValidationResult($"Should be after {_otherPropertyName}.");
+        }
     }
 }
