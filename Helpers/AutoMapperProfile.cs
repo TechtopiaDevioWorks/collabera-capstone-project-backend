@@ -18,7 +18,7 @@ public class AutoMapperProfile : Profile
                     // ignore both null & empty string properties
                     if (prop == null) return false;
                     if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
-
+                    if ((x.DestinationMember.Name == "role_id" || x.DestinationMember.Name == "team_id") && prop.Equals((byte)0)) return false;
                     // ignore null role
                     //if (x.DestinationMember.Name == "role" && src.role_id == 1) return false;
 
@@ -47,5 +47,11 @@ public class AutoMapperProfile : Profile
 
         // CreateRequest -> Training Registration
         CreateMap<WebApi.Models.TrainingRegistration.CreateRequest, TrainingRegistration>();
+
+        // CreateRequest -> Attendance
+        CreateMap<WebApi.Models.Attendance.CreateRequest, Attendance>();
+
+        // CreateRequest -> Feedback
+        CreateMap<WebApi.Models.Feedback.CreateRequest, Feedback>();
     }
 }

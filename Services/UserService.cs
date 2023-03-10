@@ -12,7 +12,7 @@ public interface IUserService
 {
     IEnumerable<UserView> GetAll(Boolean expand = false);
     User Login(LoginRequest model);
-    User GetById(int id);
+    UserView GetById(int id, bool expand = false);
     void Create(RegisterRequest model);
     void Update(int id, UpdateRequest model);
     void Delete(int id);
@@ -35,7 +35,7 @@ public class UserService : IUserService
     public IEnumerable<UserView> GetAll(Boolean expand = false)
     {
         if (expand == true)
-            return _context.User.Include(u => u.Role).Include(u => u.Team).Select(u => new UserView
+            return _context.User.Include(u => u.Role).Include(u => u.Team).Select(u => new UserViewExpand
             {
                 id = u.id,
                 username = u.username,
@@ -56,9 +56,41 @@ public class UserService : IUserService
             });
     }
 
-    public User GetById(int id)
+    public UserView GetById(int id, bool expand = false)
     {
-        return _sharedService.getUser(id);
+        User u = _sharedService.getUser(id);
+        if (expand == true)
+        {
+            Team t = null;
+            Role r = _sharedService.getRole(u.role_id);
+            try{
+                t = _sharedService.getTeam(u.team_id);
+            }
+            catch {
+                
+            }
+            return new UserViewExpand
+            {
+                id = u.id,
+                username = u.username,
+                firstname = u.firstname,
+                lastname = u.lastname,
+                email = u.email,
+                Team = t,
+                Role = r
+            };
+        }
+        else
+        {
+            return new UserView
+            {
+                id = u.id,
+                username = u.username,
+                firstname = u.firstname,
+                lastname = u.lastname,
+                email = u.email,
+            };
+        }
     }
 
     public User Login(LoginRequest model)
@@ -116,12 +148,20 @@ public class UserService : IUserService
         if (model.email != user.email && _context.User.Any(x => x.email == model.email))
             throw new AppException("User with the email '" + model.email + "' already exists");
 
+        if (model.username != user.username && _context.User.Any(x => x.username == model.username))
+            throw new AppException("User with the username '" + model.username + "' already exists");
         // hash password if it was entered
         if (!string.IsNullOrEmpty(model.password))
-            user.password = BCrypt.EnhancedHashPassword(model.password);
-
+            model.password = BCrypt.EnhancedHashPassword(model.password);
         // copy model to user and save
         _mapper.Map(model, user);
+        if(model.role_id == (byte)3) {
+            user.Team = null;
+            user.team_id = null;
+        }
+        if(user.role_id != (byte)3 && user.team_id == null) {
+            throw new AppException("This role requires a team.");
+        }
         _context.User.Update(user);
         _context.SaveChanges();
     }

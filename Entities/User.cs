@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class User
 {
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Range(1, int.MaxValue)]
     public int id { get; set; }
 
     [StringLength(50, MinimumLength = 5)]
@@ -35,6 +36,13 @@ public class User
 
 }
 
+public class UserViewExpand: UserView
+{
+    public Role Role { get; set; }
+
+    public Team Team { get; set; }
+}
+
 public class UserView
 {
     public int id { get; set; }
@@ -46,8 +54,4 @@ public class UserView
     public string lastname { get; set; }
 
     public string email { get; set; }
-
-    public Role Role { get; set; }
-
-    public Team Team { get; set; }
 }

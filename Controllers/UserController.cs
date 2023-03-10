@@ -30,9 +30,9 @@ public class UserController : ControllerBase
 
     [Route("user/{id}")]
     [HttpGet()]
-    public IActionResult GetById([FromRoute] int id)
+    public IActionResult GetById([FromRoute] int id, [FromQuery] bool expand = false)
     {
-        var user = _userService.GetById(id);
+        var user = _userService.GetById(id, expand);
         return Ok(user);
     }
 

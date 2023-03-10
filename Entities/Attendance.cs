@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Attendance
 {
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Range(1, int.MaxValue)]
     public int id { get; set; }
 
     [JsonIgnore, ForeignKey("User")]

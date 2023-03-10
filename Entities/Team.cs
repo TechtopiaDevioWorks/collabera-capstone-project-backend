@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Team
 {
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Range(1, byte.MaxValue)]
     public byte id { get; set; }
 
     [StringLength(25, MinimumLength = 1)]

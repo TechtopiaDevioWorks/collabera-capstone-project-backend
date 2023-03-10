@@ -13,6 +13,8 @@ public interface ISharedService
     Team getTeam(byte? id);
     User getUser(int id);
     Training GetTraining(int id);
+    Attendance GetAttendance(int id);
+    Feedback GetFeedback(int id);
     string GenerateToken();
     TrainingRegistration GetTrainingRegistration(int id);
 }
@@ -32,8 +34,22 @@ public class SharedService : ISharedService
 
 
     // helper methods
+    public Feedback GetFeedback(int id)
+    {
+        var feedback = _context.Feedback.Find(id);
+        if (feedback == null) throw new KeyNotFoundException("Feedback not found");
+        return feedback;
+    }
 
-    public TrainingRegistration GetTrainingRegistration(int id) {
+    public Attendance GetAttendance(int id)
+    {
+        var attendance = _context.Attendance.Find(id);
+        if (attendance == null) throw new KeyNotFoundException("Attendance not found");
+        return attendance;
+    }
+
+    public TrainingRegistration GetTrainingRegistration(int id)
+    {
         var trainingRegistration = _context.TrainingRegistration.Find(id);
         if (trainingRegistration == null) throw new KeyNotFoundException("Training registration not found");
         return trainingRegistration;

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class FeedbackType
 {
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Range(1, byte.MaxValue)]
     public byte id { get; set; }
 
     [StringLength(35, MinimumLength = 1)]

@@ -5,28 +5,60 @@ using WebApi.Entities;
 
 public class UpdateRequest
 {
-    [Required, MinLength(5), MaxLength(50)]
-    public string username { get; set; }
-    [Required, MaxLength(50)]
-    public string firstname { get; set; }
-    [Required, MaxLength(50)]
-    public string lastname { get; set; }
+    private string _username;
+    private string _firstname;
+    private string _lastname;
+    private byte _role_id;
+    private byte _team_id;
+    private string _email;
 
-    public byte role_id { get; set; }
-    public byte team_id { get; set; }
+    [MinLength(5), MaxLength(50)]
+    public string username
+    {
+        get => _username;
+        set => _username = replaceEmptyWithNull(value);
+    }
+
+    [MaxLength(50)]
+    public string firstname
+    {
+        get => _firstname;
+        set => _firstname = replaceEmptyWithNull(value);
+    }
+
+    [MaxLength(50)]
+    public string lastname
+    {
+        get => _lastname;
+        set => _lastname = replaceEmptyWithNull(value);
+    }
+
+    public byte role_id
+    {
+        get => _role_id;
+        set => _role_id = value;
+    }
+
+    public byte team_id
+    {
+        get => _team_id;
+        set => _team_id = value;
+    }
+
     [EmailAddress, MaxLength(50)]
-    public string email { get; set; }
+    public string email
+    {
+        get => _email;
+        set => _email = replaceEmptyWithNull(value);
+    }
 
-    // treat empty string as null for password fields to 
-    // make them optional in front end apps
     private string _password;
-    [MinLength(5)]
+    [MinLength(5), MaxLength(50)]
     public string password
     {
         get => _password;
         set => _password = replaceEmptyWithNull(value);
     }
-    // helpers
 
     private string replaceEmptyWithNull(string value)
     {
@@ -35,7 +67,8 @@ public class UpdateRequest
     }
 }
 
-public class LoginRequest {
+public class LoginRequest
+{
     [Required, MinLength(5), MaxLength(50)]
     public string username { get; set; }
 

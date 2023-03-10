@@ -50,7 +50,6 @@ public class TrainingRegistrationService : ITrainingRegistrationService
         var trainingRegistration = _mapper.Map<TrainingRegistration>(model);
         trainingRegistration.status_id = 1;
         trainingRegistration.registration_date = DateTime.Now;
-        Console.WriteLine($"{trainingRegistration.user_id}");
         _context.TrainingRegistration.Add(trainingRegistration);
         _context.SaveChanges();
     }
