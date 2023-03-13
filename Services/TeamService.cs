@@ -9,7 +9,7 @@ using WebApi.Models.Team;
 public interface ITeamService
 {
     IEnumerable<Team> GetAll();
-    Team GetById(byte id);
+    TeamView GetById(byte id);
     void Create(CreateRequest model);
     void Update(byte id, UpdateRequest model);
     void Delete(byte id);
@@ -38,9 +38,9 @@ public class TeamService : ITeamService
                 .ThenInclude(invite => invite.Role);
     }
 
-    public Team GetById(byte id)
+    public TeamView GetById(byte id)
     {
-        return _sharedService.getTeam(id);
+        return _sharedService.GetTeamExpand(id);
     }
 
     public void Create(CreateRequest model)
@@ -57,7 +57,7 @@ public class TeamService : ITeamService
 
     public void Update(byte id, UpdateRequest model)
     {
-        var team = _sharedService.getTeam(id);
+        var team = _sharedService.GetTeam(id);
 
         // validate
         if (model.name != team.name && _context.Team.Any(x => x.name == model.name))
@@ -71,7 +71,10 @@ public class TeamService : ITeamService
 
     public void Delete(byte id)
     {
-        var team = _sharedService.getTeam(id);
+        var teamView = _sharedService.GetTeamExpand(id);
+        if (teamView.Users.Count > 0) throw new AppException("Can not delete a team with users.");
+        if (teamView.Invites.Count > 0) throw new AppException("Can not delete a team with invites.");
+        var team = _sharedService.GetTeam(id);
         _context.Team.Remove(team);
         _context.SaveChanges();
     }

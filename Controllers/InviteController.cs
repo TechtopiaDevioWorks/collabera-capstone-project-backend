@@ -41,6 +41,13 @@ public class InviteController : ControllerBase
         return Ok(new { message = "Invite created" });
     }
 
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, UpdateRequest model)
+    {
+        _inviteService.Update(id, model);
+        return Ok(new { message = "Invite updated" });
+    }
+
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {

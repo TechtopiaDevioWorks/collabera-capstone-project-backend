@@ -19,3 +19,11 @@ public class Team
     public ICollection<Invite> Invites { get; set; }
 
 }
+
+public class TeamView
+{
+    public byte id { get; set; }
+    public string name { get; set; }
+    public ICollection<UserView> Users { get; set; }
+    public ICollection<Invite> Invites { get; set; }
+}

@@ -12,6 +12,7 @@ public interface ITrainingService
     IEnumerable<Training> GetAll(Boolean expand = false);
     void Create(CreateRequest model);
     Training GetById(int id);
+    void Update(int id, UpdateRequest model);
     void Delete(int id);
 }
 
@@ -31,10 +32,10 @@ public class TrainingService : ITrainingService
     }
     public IEnumerable<Training> GetAll(Boolean expand = false)
     {
-        if (expand == true)
+        /*if (expand == true)
             return _context.Training;
-        else
-            return _context.Training;
+        else*/
+        return _context.Training.Include(t => t.Status);
     }
 
     public void Create(CreateRequest model)
@@ -49,6 +50,26 @@ public class TrainingService : ITrainingService
     {
         return _sharedService.GetTraining(id);
     }
+
+    public void Update(int id, UpdateRequest model)
+    {
+        var training = _sharedService.GetTraining(id);
+        if(model.status_id != null) 
+            _sharedService.GetTrainingStatus(model.status_id);
+        else model.status_id = training.status_id;
+        if (model.start != null && model.end != null) {
+            if (model.start > model.end)
+            throw new AppException("End should be after start");
+        } else {
+            model.start = training.start;
+            model.end = training.end;
+        }
+        if (model.min_hours == null) model.min_hours = training.min_hours;
+        _mapper.Map(model, training);
+        _context.Training.Update(training);
+        _context.SaveChanges();
+    }
+
 
     public void Delete(int id)
     {

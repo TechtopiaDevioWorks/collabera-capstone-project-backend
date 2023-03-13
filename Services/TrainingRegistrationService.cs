@@ -9,9 +9,10 @@ using AutoMapper;
 
 public interface ITrainingRegistrationService
 {
-    IEnumerable<TrainingRegistration> GetAll(Boolean expand = false);
+    IEnumerable<TrainingRegistrationView> GetAll(Boolean expand = false);
     void Create(CreateRequest model);
     TrainingRegistration GetById(int id, Boolean expand = false);
+    void Update(int id, UpdateRequest model);
     void Delete(int id);
 }
 
@@ -30,12 +31,33 @@ public class TrainingRegistrationService : ITrainingRegistrationService
         _mapper = mapper;
     }
 
-    public IEnumerable<TrainingRegistration> GetAll(Boolean expand = false)
+    public IEnumerable<TrainingRegistrationView> GetAll(Boolean expand = false)
     {
         if (expand == true)
-            return _context.TrainingRegistration.Include(t => t.Status).Include(t => t.Training).Include(t => t.User);
+            return _context.TrainingRegistration.Include(t => t.Status).Include(t => t.Training).Include(t => t.User).Select(tr => new TrainingRegistrationViewMax {
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id,
+                Training=tr.Training,
+                Status=tr.Status,
+                User = new UserView{
+                    id = tr.User.id,
+                    username = tr.User.username,
+                    firstname = tr.User.firstname,
+                    lastname = tr.User.lastname,
+                    email = tr.User.email,
+                }
+            });
         else
-            return _context.TrainingRegistration;
+            return _context.TrainingRegistration.Select(tr => new TrainingRegistrationView{
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id
+            });
     }
 
     public void Create(CreateRequest model)
@@ -58,6 +80,17 @@ public class TrainingRegistrationService : ITrainingRegistrationService
     {
         return _sharedService.GetTrainingRegistration(id);
     }
+
+    public void Update(int id, UpdateRequest model)
+    {
+        var trainingRegistration = _sharedService.GetTrainingRegistration(id);
+        _sharedService.GetTrainingRegistrationStatus(model.status_id);
+
+        _mapper.Map(model, trainingRegistration);
+        _context.TrainingRegistration.Update(trainingRegistration);
+        _context.SaveChanges();
+    }
+
 
     public void Delete(int id)
     {

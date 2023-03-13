@@ -42,22 +42,14 @@ public class FeedbackController : ControllerBase
         return Ok(feedback);
     }
 /*
-    [Route("login")]
-    [HttpPut]
-    public IActionResult Login(LoginRequest model) {
-        var user = _userService.Login(model);
-        return Ok(user);
-    }
-
-
     [Route("user/{id}")]  
     [HttpPut]
     public IActionResult Update(int id, UpdateRequest model)
     {
         _userService.Update(id, model);
         return Ok(new { message = "User updated" });
-    }*/
-
+    }
+*/
     [Route("feedback/{id}")]  
     [HttpDelete]
     public IActionResult Delete(int id)

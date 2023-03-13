@@ -6,7 +6,7 @@ using WebApi.Entities;
 public class CreateRequest
 {
 
-    [Required, Range(0, byte.MaxValue)]
+    [Required, Range(1, byte.MaxValue)]
     public byte type_id { get; set; }
 
 
@@ -15,5 +15,6 @@ public class CreateRequest
     public int? to_attendance_id { get; set; }
     public int? to_training_registration_id { get; set; }
     public int? to_user_id { get; set; }
+    [Required]
     public string message { get; set; }
 }

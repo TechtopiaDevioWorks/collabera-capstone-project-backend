@@ -39,6 +39,7 @@ public class FeedbackService : IFeedbackService
 
     public void Create(CreateRequest model)
     {
+        var feedbacktype = _sharedService.GetFeedbackType(model.type_id);
         var feedback = _mapper.Map<Feedback>(model);
         _context.Feedback.Add(feedback);
         _context.SaveChanges();

@@ -12,6 +12,7 @@ public interface IAttendanceService
     IEnumerable<Attendance> GetAll(Boolean expand = false);
     void Create(CreateRequest model);
     Attendance GetById(int id);
+    void Update(int id, UpdateRequest model);
     void Delete(int id);
 }
 
@@ -49,6 +50,17 @@ public class AttendanceService : IAttendanceService
     {
         return _sharedService.GetAttendance(id);
     }
+
+    public void Update(int id, UpdateRequest model)
+    {
+        var attendance = _sharedService.GetAttendance(id);
+        _sharedService.GetAttendanceStatus(model.status_id);
+
+        _mapper.Map(model, attendance);
+        _context.Attendance.Update(attendance);
+        _context.SaveChanges();
+    }
+
 
     public void Delete(int id)
     {

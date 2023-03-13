@@ -42,16 +42,84 @@ public class AutoMapperProfile : Profile
         // CreateRequest -> Invite
         CreateMap<WebApi.Models.Invite.CreateRequest, Invite>();
 
+        // UpdateRequest -> Invite
+        CreateMap<WebApi.Models.Invite.UpdateRequest, Invite>().ForAllMembers(x => x.Condition(
+                (src, dest, prop) =>
+                {
+                    // ignore both null & empty string properties
+                    if (prop == null) return false;
+                    if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+                    return true;
+                }
+            ));
+
         // CreateRequest -> Training
         CreateMap<WebApi.Models.Training.CreateRequest, Training>();
+
+        // UpdateRequest -> Training
+        CreateMap<WebApi.Models.Training.UpdateRequest, Training>().ForAllMembers(x => x.Condition(
+                (src, dest, prop) =>
+                {
+                    // ignore both null & empty string properties
+                    if (prop == null) return false;
+                    if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+                    return true;
+                }
+            ));
 
         // CreateRequest -> Training Registration
         CreateMap<WebApi.Models.TrainingRegistration.CreateRequest, TrainingRegistration>();
 
+        // UpdateRequest -> Training Registration
+        CreateMap<WebApi.Models.TrainingRegistration.UpdateRequest, TrainingRegistration>().ForAllMembers(x => x.Condition(
+                (src, dest, prop) =>
+                {
+                    // ignore both null & empty string properties
+                    if (prop == null) return false;
+                    if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+                    return true;
+                }
+            ));
+
+
         // CreateRequest -> Attendance
         CreateMap<WebApi.Models.Attendance.CreateRequest, Attendance>();
 
+        // UpdateRequest -> Attendance
+        CreateMap<WebApi.Models.Attendance.UpdateRequest, Attendance>().ForAllMembers(x => x.Condition(
+                (src, dest, prop) =>
+                {
+                    // ignore both null & empty string properties
+                    if (prop == null) return false;
+                    if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+                    return true;
+                }
+            ));
+
+
         // CreateRequest -> Feedback
-        CreateMap<WebApi.Models.Feedback.CreateRequest, Feedback>();
+        CreateMap<WebApi.Models.Feedback.CreateRequest, Feedback>().ForAllMembers(x => x.Condition(
+                (src, dest, prop) =>
+                {
+                    // ignore both null & empty string properties
+                    if (prop == null) return false;
+                    if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+                    return true;
+                }
+            ));
+
+
+        // UpdateRequest -> Feedback
+        CreateMap<WebApi.Models.Feedback.UpdateRequest, Feedback>()
+            .ForAllMembers(x => x.Condition(
+                    (src, dest, prop) =>
+                    {
+                        // ignore both null & empty string properties
+                        if (prop == null) return false;
+                        if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+                        return true;
+                    }
+                ));
+
     }
 }

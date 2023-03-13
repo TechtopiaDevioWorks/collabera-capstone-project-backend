@@ -30,6 +30,7 @@ public class DateTimeAfterCurrentDateAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
+        if(value == null) return ValidationResult.Success;
         var dateTime = (DateTime)value;
         if (dateTime > DateTime.Now)
         {

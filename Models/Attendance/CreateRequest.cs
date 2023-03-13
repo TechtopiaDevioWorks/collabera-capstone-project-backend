@@ -7,10 +7,10 @@ using WebApi.Entities;
 public class CreateRequest
 {
 
-    [Required, Range(0, Int32.MaxValue)]
+    [Required, Range(1, Int32.MaxValue)]
     public int user_id { get; set; }
 
-    [Required, Range(0, Int32.MaxValue)]
+    [Required, Range(1, Int32.MaxValue)]
     public int training_id { get; set; }
 
     [Required, DateTimeAfterCurrentDateAttribute]

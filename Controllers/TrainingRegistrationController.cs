@@ -41,22 +41,14 @@ public class TrainingRegistrationController : ControllerBase
         var trainingRegistration = _trainingRegistrationService.GetById(id);
         return Ok(trainingRegistration);
     }
-/*
-    [Route("login")]
-    [HttpPut]
-    public IActionResult Login(LoginRequest model) {
-        var user = _userService.Login(model);
-        return Ok(user);
-    }
 
-
-    [Route("user/{id}")]  
+    [Route("training-registration/{id}")]  
     [HttpPut]
     public IActionResult Update(int id, UpdateRequest model)
     {
-        _userService.Update(id, model);
-        return Ok(new { message = "User updated" });
-    }*/
+        _trainingRegistrationService.Update(id, model);
+        return Ok(new { message = "Training registration updated" });
+    }
 
     [Route("training-registration/{id}")]  
     [HttpDelete]

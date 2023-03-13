@@ -58,13 +58,13 @@ public class UserService : IUserService
 
     public UserView GetById(int id, bool expand = false)
     {
-        User u = _sharedService.getUser(id);
+        User u = _sharedService.GetUser(id);
         if (expand == true)
         {
             Team t = null;
-            Role r = _sharedService.getRole(u.role_id);
+            Role r = _sharedService.GetRole(u.role_id);
             try{
-                t = _sharedService.getTeam(u.team_id);
+                t = _sharedService.GetTeam(u.team_id);
             }
             catch {
                 
@@ -142,7 +142,7 @@ public class UserService : IUserService
 
     public void Update(int id, UpdateRequest model)
     {
-        var user = _sharedService.getUser(id);
+        var user = _sharedService.GetUser(id);
 
         // validate
         if (model.email != user.email && _context.User.Any(x => x.email == model.email))
@@ -168,7 +168,7 @@ public class UserService : IUserService
 
     public void Delete(int id)
     {
-        var user = _sharedService.getUser(id);
+        var user = _sharedService.GetUser(id);
         _context.User.Remove(user);
         _context.SaveChanges();
     }
