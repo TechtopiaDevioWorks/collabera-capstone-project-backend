@@ -24,6 +24,15 @@ public class ErrorHandlerMiddleware
         try
         {
             await _next(context);
+            if(context.Response.StatusCode == 401) {
+                context.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new { message = "You need to be logged in to access this." });
+                await context.Response.WriteAsync(result);
+            } else if (context.Response.StatusCode == 403) {
+                context.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new { message = "You don't have enough permissions to access this." });
+                await context.Response.WriteAsync(result);
+            }
         }
         catch (Exception error)
         {

@@ -11,10 +11,14 @@ using BCrypt.Net;
 public interface IUserService
 {
     IEnumerable<UserView> GetAll(Boolean expand = false);
+    IEnumerable<UserView> GetAllTeam(string teamId, Boolean expand = false);
+    User GetByToken(string Token);
     User Login(LoginRequest model);
+    User LoginByToken(string Token);
     UserView GetById(int id, bool expand = false);
     void Create(RegisterRequest model);
     void Update(int id, UpdateRequest model);
+
     void Delete(int id);
 }
 
@@ -56,6 +60,37 @@ public class UserService : IUserService
             });
     }
 
+    public IEnumerable<UserView> GetAllTeam(string teamId, Boolean expand = false)
+    {
+        if (teamId == null) throw new KeyNotFoundException("Invalid teamid.");
+        Team team = null;
+        try {
+            team = _sharedService.GetTeam(Byte.Parse(teamId));
+        } catch {
+            throw new KeyNotFoundException("Invalid teamid.");
+        }
+        if (expand == true)
+            return _context.User.Include(u => u.Role).Include(u => u.Team).Where(u => u.Team == team).Select(u => new UserViewExpand
+            {
+                id = u.id,
+                username = u.username,
+                firstname = u.firstname,
+                lastname = u.lastname,
+                email = u.email,
+                Team = u.Team,
+                Role = u.Role
+            });
+        else
+            return _context.User.Where(u => u.team_id == team.id).Select(u => new UserView
+            {
+                id = u.id,
+                username = u.username,
+                firstname = u.firstname,
+                lastname = u.lastname,
+                email = u.email,
+            });
+    }
+
     public UserView GetById(int id, bool expand = false)
     {
         User u = _sharedService.GetUser(id);
@@ -63,11 +98,13 @@ public class UserService : IUserService
         {
             Team t = null;
             Role r = _sharedService.GetRole(u.role_id);
-            try{
+            try
+            {
                 t = _sharedService.GetTeam(u.team_id);
             }
-            catch {
-                
+            catch
+            {
+
             }
             return new UserViewExpand
             {
@@ -91,6 +128,19 @@ public class UserService : IUserService
                 email = u.email,
             };
         }
+    }
+
+    public User GetByToken(string Token)
+    {
+        var user = _context.User.Include(u => u.Role).Include(u => u.Team).Where(x => x.token == Token).FirstOrDefault();
+        return user;
+    }
+
+    public User LoginByToken(string Token)
+    {
+        var user = _context.User.Include(u => u.Role).Include(u => u.Team).Where(x => x.token == Token).FirstOrDefault();
+        if (user == null) throw new KeyNotFoundException("Invalid token.");
+        return user;
     }
 
     public User Login(LoginRequest model)
@@ -155,11 +205,13 @@ public class UserService : IUserService
             model.password = BCrypt.EnhancedHashPassword(model.password);
         // copy model to user and save
         _mapper.Map(model, user);
-        if(model.role_id == (byte)3) {
+        if (model.role_id == (byte)3)
+        {
             user.Team = null;
             user.team_id = null;
         }
-        if(user.role_id != (byte)3 && user.team_id == null) {
+        if (user.role_id != (byte)3 && user.team_id == null)
+        {
             throw new AppException("This role requires a team.");
         }
         _context.User.Update(user);

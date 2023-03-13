@@ -2,8 +2,12 @@ namespace WebApi.Controllers;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using WebApi.Models.User;
 using WebApi.Services;
+using System.Text.Json;
 
 [ApiController]
 //[Route("[controller]")]
@@ -20,14 +24,29 @@ public class UserController : ControllerBase
         _mapper = mapper;
     }
 
-    [Route("user")]    
+
+    [Route("user")]
     [HttpGet]
+    [Authorize(Policy = "isHrOrManager")]
     public IActionResult GetAll([FromQuery] bool expand = false)
     {
-        var users = _userService.GetAll(expand);
-        return Ok(users);
+        string roleId = User.FindFirstValue("role_id");
+        if (roleId == "3")
+        {
+            var users = _userService.GetAll(expand);
+            return Ok(users);
+        }
+        else if (roleId == "2")
+        {
+            string teamId = User.FindFirstValue("team_id");
+            var users = _userService.GetAllTeam(teamId, expand);
+            return Ok(users);
+        }
+        else return NotFound();
     }
 
+
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [Route("user/{id}")]
     [HttpGet()]
     public IActionResult GetById([FromRoute] int id, [FromQuery] bool expand = false)
@@ -36,14 +55,27 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    [AllowAnonymous]
     [Route("login")]
     [HttpPut]
-    public IActionResult Login(LoginRequest model) {
+    public IActionResult Login(LoginRequest model)
+    {
         var user = _userService.Login(model);
         return Ok(user);
     }
 
-    [Route("user")]  
+    [AllowAnonymous]
+    [Route("token-login")]
+    [HttpPut]
+    public IActionResult Login([FromBody] JsonElement body)
+    {
+        string token = body.GetProperty("token").ToString();
+        var user = _userService.LoginByToken(token);
+        return Ok(user);
+    }
+
+    [AllowAnonymous]
+    [Route("user")]
     [HttpPost]
     public IActionResult Create(RegisterRequest model)
     {
@@ -51,7 +83,8 @@ public class UserController : ControllerBase
         return Ok(new { message = "User created" });
     }
 
-    [Route("user/{id}")]  
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
+    [Route("user/{id}")]
     [HttpPut]
     public IActionResult Update(int id, UpdateRequest model)
     {
@@ -59,7 +92,8 @@ public class UserController : ControllerBase
         return Ok(new { message = "User updated" });
     }
 
-    [Route("user/{id}")]  
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
+    [Route("user/{id}")]
     [HttpDelete]
     public IActionResult Delete(int id)
     {

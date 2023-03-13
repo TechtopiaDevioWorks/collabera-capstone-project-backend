@@ -2,6 +2,8 @@ namespace WebApi.Controllers;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using WebApi.Models.Team;
 using WebApi.Services;
 
@@ -20,6 +22,7 @@ public class TeamController : ControllerBase
         _mapper = mapper;
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -27,6 +30,7 @@ public class TeamController : ControllerBase
         return Ok(teams);
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [HttpGet("{id}")]
     public IActionResult GetById(byte id)
     {
@@ -34,6 +38,7 @@ public class TeamController : ControllerBase
         return Ok(team);
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [HttpPost]
     public IActionResult Create(CreateRequest model)
     {
@@ -41,6 +46,7 @@ public class TeamController : ControllerBase
         return Ok(new { message = "Team created" });
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [HttpPut("{id}")]
     public IActionResult Update(byte id, UpdateRequest model)
     {
@@ -48,6 +54,7 @@ public class TeamController : ControllerBase
         return Ok(new { message = "Team updated" });
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [HttpDelete("{id}")]
     public IActionResult Delete(byte id)
     {
