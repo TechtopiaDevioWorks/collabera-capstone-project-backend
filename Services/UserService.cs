@@ -16,6 +16,7 @@ public interface IUserService
     User Login(LoginRequest model);
     User LoginByToken(string Token);
     UserView GetById(int id, bool expand = false);
+    IEnumerable<Role> GetRoleList();
     void Create(RegisterRequest model);
     void Update(int id, UpdateRequest model);
 
@@ -58,6 +59,12 @@ public class UserService : IUserService
                 lastname = u.lastname,
                 email = u.email,
             });
+    }
+
+    public IEnumerable<Role> GetRoleList()
+    {
+
+        return _context.Role;
     }
 
     public IEnumerable<UserView> GetAllTeam(string teamId, Boolean expand = false)

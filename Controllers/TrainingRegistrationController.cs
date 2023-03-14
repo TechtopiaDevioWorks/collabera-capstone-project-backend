@@ -21,6 +21,7 @@ public class TrainingRegistrationController : ControllerBase
         _mapper = mapper;
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [Route("training-registration")]    
     [HttpGet]
     public IActionResult GetAll([FromQuery] bool expand = false)
@@ -28,6 +29,8 @@ public class TrainingRegistrationController : ControllerBase
         var trainingRegistrations = _trainingRegistrationService.GetAll(expand);
         return Ok(trainingRegistrations);
     }
+
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [Route("training-registration")]  
     [HttpPost]
     public IActionResult Create(CreateRequest model)
@@ -36,6 +39,7 @@ public class TrainingRegistrationController : ControllerBase
         return Ok(new { message = "Training registration created" });
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [Route("training-registration/{id}")]
     [HttpGet()]
     public IActionResult GetById([FromRoute] int id)
@@ -44,6 +48,7 @@ public class TrainingRegistrationController : ControllerBase
         return Ok(trainingRegistration);
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [Route("training-registration/{id}")]  
     [HttpPut]
     public IActionResult Update(int id, UpdateRequest model)
@@ -52,6 +57,7 @@ public class TrainingRegistrationController : ControllerBase
         return Ok(new { message = "Training registration updated" });
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
     [Route("training-registration/{id}")]  
     [HttpDelete]
     public IActionResult Delete(int id)

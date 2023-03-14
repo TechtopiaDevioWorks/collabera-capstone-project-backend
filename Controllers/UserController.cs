@@ -1,5 +1,5 @@
 namespace WebApi.Controllers;
-
+using System;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
@@ -43,6 +43,15 @@ public class UserController : ControllerBase
             return Ok(users);
         }
         else return NotFound();
+    }
+
+    [Route("role")]
+    [HttpGet]
+    [Authorize(Policy = "isHr")]
+    public IActionResult GetAll()
+    {
+        var roleList = _userService.GetRoleList();
+        return Ok(roleList);
     }
 
 
@@ -89,6 +98,22 @@ public class UserController : ControllerBase
     public IActionResult Update(int id, UpdateRequest model)
     {
         _userService.Update(id, model);
+        return Ok(new { message = "User updated" });
+    }
+
+    [Authorize(AuthenticationSchemes = "CustomScheme")]
+    [Route("user")]
+    [HttpPut]
+    public IActionResult UpdatePersonal(UpdateRequest model)
+    {
+        int userId = -1;
+        try {
+        userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        }
+        catch {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Could not identify user." });
+        }
+        _userService.Update(userId, model);
         return Ok(new { message = "User updated" });
     }
 
