@@ -74,6 +74,8 @@ public class TrainingService : ITrainingService
     public void Delete(int id)
     {
         var training = _sharedService.GetTraining(id);
+        var userscount = _context.TrainingRegistration.Where(t => t.training_id == id).Count();
+        if(userscount > 0)  throw new AppException("A training with applicants can't be deleted.");
         _context.Training.Remove(training);
         _context.SaveChanges();
     }

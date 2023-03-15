@@ -14,7 +14,7 @@ public interface IInviteService
 {
     IEnumerable<Invite> GetAll();
     Invite GetById(int id);
-    void Create(CreateRequest model);
+    Invite Create(CreateRequest model);
     void Update(int id, UpdateRequest model);
     void Delete(int id);
 }
@@ -43,7 +43,7 @@ public class InviteService : IInviteService
         return _sharedService.GetInvite(id);
     }
 
-    public void Create(CreateRequest model)
+    public Invite Create(CreateRequest model)
     {
         // validate
         _sharedService.GetRole(model.role_id);
@@ -62,6 +62,7 @@ public class InviteService : IInviteService
         // save user
         _context.Invite.Add(invite);
         _context.SaveChanges();
+        return invite;
     }
 
     public void Update(int id, UpdateRequest model)

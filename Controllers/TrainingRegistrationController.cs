@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using WebApi.Models.TrainingRegistration;
 using WebApi.Services;
+using System.Security.Claims;
 
 [ApiController]
 public class TrainingRegistrationController : ControllerBase
@@ -64,5 +65,30 @@ public class TrainingRegistrationController : ControllerBase
     {
         _trainingRegistrationService.Delete(id);
         return Ok(new { message = "Training registration deleted" });
+    }
+
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHrOrManager")]
+    [Route("training-history/{id}")]
+    [HttpGet()]
+    public IActionResult GetUserTrainingHistory([FromRoute] int id)
+    {
+        var trainingHistory = _trainingRegistrationService.GetUserTrainingHistory(id);
+        return Ok(trainingHistory);
+    }
+
+    [Authorize(AuthenticationSchemes = "CustomScheme")]
+    [Route("training-history")]
+    [HttpGet()]
+    public IActionResult GetUserTrainingHistoryPersonal()
+    {
+        int userId = -1;
+        try {
+        userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        }
+        catch {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Could not identify user." });
+        }
+        var trainingHistory = _trainingRegistrationService.GetUserTrainingHistory(userId);
+        return Ok(trainingHistory);
     }
 }

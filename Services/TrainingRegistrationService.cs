@@ -12,6 +12,7 @@ public interface ITrainingRegistrationService
     IEnumerable<TrainingRegistrationView> GetAll(Boolean expand = false);
     void Create(CreateRequest model);
     TrainingRegistration GetById(int id, Boolean expand = false);
+    IEnumerable<TrainingRegistrationViewMax> GetUserTrainingHistory(int userid);
     void Update(int id, UpdateRequest model);
     void Delete(int id);
 }
@@ -74,6 +75,25 @@ public class TrainingRegistrationService : ITrainingRegistrationService
         trainingRegistration.registration_date = DateTime.Now;
         _context.TrainingRegistration.Add(trainingRegistration);
         _context.SaveChanges();
+    }
+
+    public IEnumerable<TrainingRegistrationViewMax> GetUserTrainingHistory(int userid) {
+        return _context.TrainingRegistration.Include(t => t.Status).Include(t => t.Training).Include(t => t.User).Where(t => t.user_id == userid).Select(tr => new TrainingRegistrationViewMax {
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id,
+                Training=tr.Training,
+                Status=tr.Status,
+                User = new UserView{
+                    id = tr.User.id,
+                    username = tr.User.username,
+                    firstname = tr.User.firstname,
+                    lastname = tr.User.lastname,
+                    email = tr.User.email,
+                }
+        });
     }
 
     public TrainingRegistration GetById(int id, bool expand = false)

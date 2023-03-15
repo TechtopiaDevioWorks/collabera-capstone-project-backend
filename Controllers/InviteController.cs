@@ -39,8 +39,8 @@ public class InviteController : ControllerBase
     [HttpPost]
     public IActionResult Create(CreateRequest model)
     {
-        _inviteService.Create(model);
-        return Ok(new { message = "Invite created" });
+        var invite = _inviteService.Create(model);
+        return Ok(new { message = "Invite created", invite = invite });
     }
 
     [HttpPut("{id}")]
