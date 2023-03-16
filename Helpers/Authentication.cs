@@ -62,6 +62,9 @@ public class CustomAuthenticationHandler : AuthenticationHandler<AuthenticationS
 
 public static class CustomPolicies
 {
+    public static AuthorizationPolicy isEmployee = new AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .RequireClaim("role_id", "1").Build();
 
     public static AuthorizationPolicy isHr = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()

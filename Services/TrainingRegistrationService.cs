@@ -10,6 +10,10 @@ using AutoMapper;
 public interface ITrainingRegistrationService
 {
     IEnumerable<TrainingRegistrationView> GetAll(Boolean expand = false);
+    public IEnumerable<TrainingRegistrationView> GetAllTeam(string teamId, Boolean expand = false);
+    IEnumerable<TrainingRegistrationView> GetAllByTraining(int trainingId, Boolean expand = false);
+    public IEnumerable<TrainingRegistrationView> GetAllTeamByTraining(int trainingId, string teamId, Boolean expand = false);
+    public IEnumerable<TrainingRegistrationStatus> GetStatusList();
     void Create(CreateRequest model);
     TrainingRegistration GetById(int id, Boolean expand = false);
     IEnumerable<TrainingRegistrationViewMax> GetUserTrainingHistory(int userid);
@@ -30,6 +34,12 @@ public class TrainingRegistrationService : ITrainingRegistrationService
         _sharedService = new SharedService(context, mapper);
         _context = context;
         _mapper = mapper;
+    }
+
+    public IEnumerable<TrainingRegistrationStatus> GetStatusList()
+    {
+
+        return _context.TrainingRegistrationStatus;
     }
 
     public IEnumerable<TrainingRegistrationView> GetAll(Boolean expand = false)
@@ -53,6 +63,111 @@ public class TrainingRegistrationService : ITrainingRegistrationService
             });
         else
             return _context.TrainingRegistration.Select(tr => new TrainingRegistrationView{
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id
+            });
+    }
+
+    public IEnumerable<TrainingRegistrationView> GetAllTeam(string teamId, Boolean expand = false)
+    {
+        if (teamId == null) throw new KeyNotFoundException("Invalid teamid.");
+        Team team = null;
+        try {
+            team = _sharedService.GetTeam(Byte.Parse(teamId));
+        } catch {
+            throw new KeyNotFoundException("Invalid teamid.");
+        }
+        if (expand == true)
+            return _context.TrainingRegistration.Include(t => t.Status).Include(t => t.Training).Include(t => t.User).Where(u => u.User.team_id == team.id).Select(tr => new TrainingRegistrationViewMax {
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id,
+                Training=tr.Training,
+                Status=tr.Status,
+                User = new UserView{
+                    id = tr.User.id,
+                    username = tr.User.username,
+                    firstname = tr.User.firstname,
+                    lastname = tr.User.lastname,
+                    email = tr.User.email,
+                }
+            });
+        else
+            return _context.TrainingRegistration.Include(t => t.User).Where(u => u.User.team_id == team.id).Select(tr => new TrainingRegistrationView{
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id
+            });
+    }
+
+    public IEnumerable<TrainingRegistrationView> GetAllByTraining(int trainingId, Boolean expand = false)
+    {
+        if (expand == true)
+            return _context.TrainingRegistration.Where(u => u.training_id == trainingId).Include(t => t.Status).Include(t => t.Training).Include(t => t.User).Include(t => t.User.Team).Include(t => t.User.Role).Select(tr => new TrainingRegistrationViewMaxExpand {
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id,
+                Training=tr.Training,
+                Status=tr.Status,
+                User = new UserViewExpand{
+                    id = tr.User.id,
+                    username = tr.User.username,
+                    firstname = tr.User.firstname,
+                    lastname = tr.User.lastname,
+                    email = tr.User.email,
+                    Role = tr.User.Role,
+                    Team = tr.User.Team
+                }
+            });
+        else
+            return _context.TrainingRegistration.Where(u => u.training_id == trainingId).Select(tr => new TrainingRegistrationView{
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id
+            });
+    }
+
+    public IEnumerable<TrainingRegistrationView> GetAllTeamByTraining(int trainingId, string teamId, Boolean expand = false)
+    {
+        if (teamId == null) throw new KeyNotFoundException("Invalid teamid.");
+        Team team = null;
+        try {
+            team = _sharedService.GetTeam(Byte.Parse(teamId));
+        } catch {
+            throw new KeyNotFoundException("Invalid teamid.");
+        }
+        if (expand == true)
+            return _context.TrainingRegistration.Where(u => u.training_id == trainingId).Include(t => t.Status).Include(t => t.Training).Include(t => t.User).Include(t => t.User.Team).Include(t => t.User.Role).Where(u => u.User.team_id == team.id).Select(tr => new TrainingRegistrationViewMaxExpand {
+                id=tr.id,
+                user_id=tr.user_id,
+                training_id=tr.training_id,
+                registration_date=tr.registration_date,
+                status_id=tr.status_id,
+                Training=tr.Training,
+                Status=tr.Status,
+                User = new UserViewExpand{
+                    id = tr.User.id,
+                    username = tr.User.username,
+                    firstname = tr.User.firstname,
+                    lastname = tr.User.lastname,
+                    email = tr.User.email,
+                    Role = tr.User.Role,
+                    Team = tr.User.Team
+                }
+            });
+        else
+            return _context.TrainingRegistration.Where(u => u.training_id == trainingId).Include(t => t.User).Where(u => u.User.team_id == team.id).Select(tr => new TrainingRegistrationView{
                 id=tr.id,
                 user_id=tr.user_id,
                 training_id=tr.training_id,

@@ -27,4 +27,11 @@ public class Training
     [JsonIgnore, ForeignKey("Status")]
     public byte status_id { get; set; }
     public TrainingStatus Status { get; set; }
+
+    [JsonIgnore]
+    public ICollection<TrainingRegistration> TrainingRegistrations { get; set; }
+}
+
+public class TrainingViewAdmin : Training{
+    public int NoTrainingRegistrations { get; set; }
 }

@@ -37,3 +37,9 @@ public class TrainingRegistrationViewMax: TrainingRegistrationView {
     public Training Training { get; set; }
     public TrainingRegistrationStatus Status { get; set; }
 }
+
+public class TrainingRegistrationViewMaxExpand: TrainingRegistrationView {
+    public UserViewExpand User { get; set; }
+    public Training Training { get; set; }
+    public TrainingRegistrationStatus Status { get; set; }
+}

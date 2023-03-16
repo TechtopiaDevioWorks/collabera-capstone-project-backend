@@ -38,6 +38,7 @@ var builder = WebApplication.CreateBuilder(args);
     });
     services.AddAuthorization(options =>
     {
+        options.AddPolicy("isEmployee", CustomPolicies.isEmployee);
         options.AddPolicy("isHR", CustomPolicies.isHr);
         options.AddPolicy("isManager", CustomPolicies.isManager);
         options.AddPolicy("isHrOrManager", CustomPolicies.isHrOrManager);

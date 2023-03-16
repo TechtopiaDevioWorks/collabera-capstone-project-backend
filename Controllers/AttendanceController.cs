@@ -20,22 +20,23 @@ public class AttendanceController : ControllerBase
         _attendanceService = attendanceService;
         _mapper = mapper;
     }
-
-    [Route("attendance")]    
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
+    [Route("attendance")]
     [HttpGet]
     public IActionResult GetAll([FromQuery] bool expand = false)
     {
         var attendances = _attendanceService.GetAll(expand);
         return Ok(attendances);
     }
-    [Route("attendance")]  
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
+    [Route("attendance")]
     [HttpPost]
     public IActionResult Create(CreateRequest model)
     {
         _attendanceService.Create(model);
         return Ok(new { message = "Attendance created" });
     }
-
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
     [Route("attendance/{id}")]
     [HttpGet()]
     public IActionResult GetById([FromRoute] int id)
@@ -43,16 +44,16 @@ public class AttendanceController : ControllerBase
         var attendance = _attendanceService.GetById(id);
         return Ok(attendance);
     }
-
-    [Route("attendance/{id}")]  
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
+    [Route("attendance/{id}")]
     [HttpPut]
     public IActionResult Update(int id, UpdateRequest model)
     {
         _attendanceService.Update(id, model);
         return Ok(new { message = "Attendance updated" });
     }
-
-    [Route("attendance/{id}")]  
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
+    [Route("attendance/{id}")]
     [HttpDelete]
     public IActionResult Delete(int id)
     {

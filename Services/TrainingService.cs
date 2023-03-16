@@ -6,11 +6,13 @@ using WebApi.Models.Training;
 using System;
 using System.Text;
 using AutoMapper;
+using Microsoft.AspNetCore.OData.Query;
 
 public interface ITrainingService
 {
-    IEnumerable<Training> GetAll(Boolean expand = false);
+    IEnumerable<Training> GetAll(string roleId, string teamId, Boolean expand = false);
     void Create(CreateRequest model);
+    int GetAllCount();
     Training GetById(int id);
     void Update(int id, UpdateRequest model);
     void Delete(int id);
@@ -30,14 +32,58 @@ public class TrainingService : ITrainingService
         _context = context;
         _mapper = mapper;
     }
-    public IEnumerable<Training> GetAll(Boolean expand = false)
+    [EnableQuery()]
+    public IEnumerable<Training> GetAll(string roleId, string teamId, Boolean expand = false)
     {
-        /*if (expand == true)
-            return _context.Training;
-        else*/
-        return _context.Training.Include(t => t.Status);
+        if (roleId == "1")
+        {
+            return _context.Training.Include(t => t.Status);
+        }
+        else if (roleId == "2")
+        {
+            if (teamId == null) throw new KeyNotFoundException("Invalid teamid.");
+            Team team = null;
+            try
+            {
+                team = _sharedService.GetTeam(Byte.Parse(teamId));
+            }
+            catch
+            {
+                throw new KeyNotFoundException("Invalid teamid.");
+            }
+            return _context.Training.Include(t => t.Status).Include(t => t.TrainingRegistrations).ThenInclude(t => t.User).ThenInclude(u => u.Team).Select(u => new TrainingViewAdmin
+            {
+                id = u.id,
+                description = u.description,
+                start = u.start,
+                end = u.end,
+                name = u.name,
+                Status = u.Status,
+                min_hours = u.min_hours,
+                NoTrainingRegistrations = u.TrainingRegistrations.Where(tr => tr.User.Team == team).Count()
+            });
+        }
+        else if (roleId == "3")
+        {
+            return _context.Training.Include(t => t.Status).Include(t => t.TrainingRegistrations).Select(u => new TrainingViewAdmin
+            {
+                id = u.id,
+                description = u.description,
+                start = u.start,
+                end = u.end,
+                name = u.name,
+                Status = u.Status,
+                min_hours = u.min_hours,
+                NoTrainingRegistrations = u.TrainingRegistrations.Count()
+            });
+        } else {
+             throw new AppException("Invalid role/team");
+        }
     }
-
+    public int GetAllCount()
+    {
+        return _context.Training.Count();
+    }
     public void Create(CreateRequest model)
     {
         var training = _mapper.Map<Training>(model);
@@ -54,13 +100,16 @@ public class TrainingService : ITrainingService
     public void Update(int id, UpdateRequest model)
     {
         var training = _sharedService.GetTraining(id);
-        if(model.status_id != null) 
+        if (model.status_id != null)
             _sharedService.GetTrainingStatus(model.status_id);
         else model.status_id = training.status_id;
-        if (model.start != null && model.end != null) {
+        if (model.start != null && model.end != null)
+        {
             if (model.start > model.end)
-            throw new AppException("End should be after start");
-        } else {
+                throw new AppException("End should be after start");
+        }
+        else
+        {
             model.start = training.start;
             model.end = training.end;
         }
@@ -75,7 +124,7 @@ public class TrainingService : ITrainingService
     {
         var training = _sharedService.GetTraining(id);
         var userscount = _context.TrainingRegistration.Where(t => t.training_id == id).Count();
-        if(userscount > 0)  throw new AppException("A training with applicants can't be deleted.");
+        if (userscount > 0) throw new AppException("A training with applicants can't be deleted.");
         _context.Training.Remove(training);
         _context.SaveChanges();
     }

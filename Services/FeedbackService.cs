@@ -40,8 +40,28 @@ public class FeedbackService : IFeedbackService
     public void Create(CreateRequest model)
     {
         var feedbacktype = _sharedService.GetFeedbackType(model.type_id);
-        var feedback = _mapper.Map<Feedback>(model);
-        _context.Feedback.Add(feedback);
+        Feedback feedback = null;
+        switch(model.type_id) {
+            case 1:
+                feedback = _context.Feedback.Where(f=> f.type_id == model.type_id && f.from_user_id == model.from_user_id && f.to_training_id == model.to_training_id).FirstOrDefault();
+                break;
+            case 2:
+                feedback = _context.Feedback.Where(f=> f.type_id == model.type_id && f.from_user_id == model.from_user_id && f.to_attendance_id == model.to_attendance_id).FirstOrDefault();
+                break;
+            case 3:
+                feedback = _context.Feedback.Where(f=> f.type_id == model.type_id && f.from_user_id == model.from_user_id && f.to_user_id == model.to_user_id).FirstOrDefault();
+                break;
+            case 4:
+                feedback = _context.Feedback.Where(f=> f.type_id == model.type_id && f.from_user_id == model.from_user_id && f.to_training_registration_id == model.to_training_registration_id).FirstOrDefault();
+                break;
+        }
+        if(feedback == null) {
+            feedback = _mapper.Map<Feedback>(model);
+            _context.Feedback.Add(feedback);
+        } else {
+            _mapper.Map(model, feedback);
+            _context.Feedback.Update(feedback);
+        }
         _context.SaveChanges();
     }
 

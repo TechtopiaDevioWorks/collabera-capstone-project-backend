@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using WebApi.Models.Training;
+using System.Security.Claims;
 using WebApi.Services;
+using Microsoft.AspNetCore.OData.Query;
 
 [ApiController]
 public class TrainingController : ControllerBase
@@ -20,14 +22,29 @@ public class TrainingController : ControllerBase
         _trainingService = trainingService;
         _mapper = mapper;
     }
-
+    [Authorize(AuthenticationSchemes = "CustomScheme")]
     [Route("training")]    
     [HttpGet]
+    [EnableQuery()]
     public IActionResult GetAll([FromQuery] bool expand = false)
     {
-        var trainings = _trainingService.GetAll(expand);
+        string roleId = User.FindFirstValue("role_id");
+        string teamId = User.FindFirstValue("team_id");
+        var trainings = _trainingService.GetAll(roleId, teamId, expand);
         return Ok(trainings);
     }
+
+    [Authorize(AuthenticationSchemes = "CustomScheme")]
+    [Route("training/count")]    
+    [HttpGet]
+    [EnableQuery()]
+    public IActionResult GetAllCount()
+    {
+        var trainingCount = _trainingService.GetAllCount();
+        return Ok(trainingCount);
+    }
+
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
     [Route("training")]  
     [HttpPost]
     public IActionResult Create(CreateRequest model)
@@ -36,6 +53,7 @@ public class TrainingController : ControllerBase
         return Ok(new { message = "Training created" });
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHrOrManager")]
     [Route("training/{id}")]
     [HttpGet()]
     public IActionResult GetById([FromRoute] int id)
@@ -44,6 +62,7 @@ public class TrainingController : ControllerBase
         return Ok(training);
     }
 
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
     [Route("training/{id}")]  
     [HttpPut]
     public IActionResult Update(int id, UpdateRequest model)
@@ -51,7 +70,7 @@ public class TrainingController : ControllerBase
         _trainingService.Update(id, model);
         return Ok(new { message = "Training updated" });
     }
-
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
     [Route("training/{id}")]  
     [HttpDelete]
     public IActionResult Delete(int id)
