@@ -34,4 +34,5 @@ public class Training
 
 public class TrainingViewAdmin : Training{
     public int NoTrainingRegistrations { get; set; }
+    public bool expired {get;set;}
 }

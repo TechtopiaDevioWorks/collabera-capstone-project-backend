@@ -9,7 +9,7 @@ using AutoMapper;
 
 public interface IFeedbackService
 {
-    IEnumerable<Feedback> GetAll(Boolean expand = false);
+    IEnumerable<FeedbackView> GetAll(int userId, string roleId, string teamId, int type_id, int from_user_id, int to_training_id, int to_attendance_id, int to_training_registration_id, int to_user_id);
     void Create(CreateRequest model);
     Feedback GetById(int id);
     void Delete(int id);
@@ -29,12 +29,102 @@ public class FeedbackService : IFeedbackService
         _context = context;
         _mapper = mapper;
     }
-    public IEnumerable<Feedback> GetAll(Boolean expand = false)
+    public IEnumerable<FeedbackView> GetAll(int userId, string roleId, string teamId, int type_id, int from_user_id, int to_training_id, int to_attendance_id, int to_training_registration_id, int to_user_id)
     {
-        if (expand == true)
-            return _context.Feedback;
-        else
-            return _context.Feedback;
+        switch(roleId) {
+            case "1":
+                return _context.Feedback.Where(f => 
+                f.type_id == type_id && 
+                (from_user_id != 0 ? f.from_user_id == from_user_id: true) && 
+                (to_training_id != 0 ?f.to_training_id == to_training_id: true) && 
+                (to_attendance_id != 0 ? f.to_attendance_id == to_attendance_id: true) && 
+                (to_training_registration_id != 0 ? f.to_training_registration_id == to_training_registration_id: true) && 
+                (to_user_id != 0 ? f.to_user_id == to_user_id: true))
+                .Where(f => f.from_user_id == userId || f.to_user_id == userId)
+                .Include(f => f.FromUser).Include(f => f.ToUser).Include(f => f.ToTraining).Include(f => f.ToAttendance).Include(f => f.ToTrainingRegistration).Select(f => new FeedbackView {
+                    id=f.id,
+                    FeedbackType=f.FeedbackType,
+                    FromUser = new UserView {id = f.FromUser.id,
+                        username = f.FromUser.username,
+                        firstname = f.FromUser.firstname,
+                        lastname = f.FromUser.lastname,
+                        email = f.FromUser.email},
+                    ToUser = f.ToUser != null ? new UserView {id = f.ToUser.id,
+                        username = f.ToUser.username,
+                        firstname = f.ToUser.firstname,
+                        lastname = f.ToUser.lastname,
+                        email = f.ToUser.email} : null,
+                    ToTraining = f.ToTraining,
+                    ToAttendance = f.ToAttendance,
+                    ToTrainingRegistration = f.ToTrainingRegistration,
+                    message= f.message
+                });
+            case "2":
+                if (teamId == null) throw new KeyNotFoundException("Invalid teamid.");
+                Team team = null;
+                try
+                {
+                    team = _sharedService.GetTeam(Byte.Parse(teamId));
+                }
+                catch
+                {
+                    throw new KeyNotFoundException("Invalid teamid.");
+                }
+                return _context.Feedback.Where(f => 
+                f.type_id == type_id && 
+                (from_user_id != 0 ? f.from_user_id == from_user_id: true) && 
+                (to_training_id != 0 ?f.to_training_id == to_training_id: true) && 
+                (to_attendance_id != 0 ? f.to_attendance_id == to_attendance_id: true) && 
+                (to_training_registration_id != 0 ? f.to_training_registration_id == to_training_registration_id: true) && 
+                (to_user_id != 0 ? f.to_user_id == to_user_id: true))
+                .Include(f => f.FromUser).Include(f => f.ToUser).Include(f => f.ToTraining).Include(f => f.ToAttendance).Include(f => f.ToTrainingRegistration)
+                .Where(f => f.FromUser.team_id == team.id || f.ToUser.team_id == team.id)
+                .Select(f => new FeedbackView {
+                    id=f.id,
+                    FeedbackType=f.FeedbackType,
+                    FromUser = new UserView {id = f.FromUser.id,
+                        username = f.FromUser.username,
+                        firstname = f.FromUser.firstname,
+                        lastname = f.FromUser.lastname,
+                        email = f.FromUser.email},
+                    ToUser = f.ToUser != null ? new UserView {id = f.ToUser.id,
+                        username = f.ToUser.username,
+                        firstname = f.ToUser.firstname,
+                        lastname = f.ToUser.lastname,
+                        email = f.ToUser.email} : null,
+                    ToTraining = f.ToTraining,
+                    ToAttendance = f.ToAttendance,
+                    ToTrainingRegistration = f.ToTrainingRegistration,
+                    message= f.message
+                });
+            case "3":
+                return _context.Feedback.Where(f => 
+                f.type_id == type_id && 
+                (from_user_id != 0 ? f.from_user_id == from_user_id: true) && 
+                (to_training_id != 0 ?f.to_training_id == to_training_id: true) && 
+                (to_attendance_id != 0 ? f.to_attendance_id == to_attendance_id: true) && 
+                (to_training_registration_id != 0 ? f.to_training_registration_id == to_training_registration_id: true) && 
+                (to_user_id != 0 ? f.to_user_id == to_user_id: true))
+                .Include(f => f.FromUser).Include(f => f.ToUser).Include(f => f.ToTraining).Include(f => f.ToAttendance).Include(f => f.ToTrainingRegistration).Select(f => new FeedbackView {
+                    id=f.id,
+                    FeedbackType=f.FeedbackType,
+                    FromUser = new UserView {id = f.FromUser.id,
+                        username = f.FromUser.username,
+                        firstname = f.FromUser.firstname,
+                        lastname = f.FromUser.lastname,
+                        email = f.FromUser.email},
+                    ToUser = f.ToUser != null ? new UserView {id = f.ToUser.id,
+                        username = f.ToUser.username,
+                        firstname = f.ToUser.firstname,
+                        lastname = f.ToUser.lastname,
+                        email = f.ToUser.email} : null,
+                    ToTraining = f.ToTraining,
+                    ToAttendance = f.ToAttendance,
+                    ToTrainingRegistration = f.ToTrainingRegistration,
+                    message= f.message
+                });
+        }
+        throw new AppException("Role not found");
     }
 
     public void Create(CreateRequest model)

@@ -35,3 +35,13 @@ public class Feedback
 
     public string message {get;set;}
 }
+public class FeedbackView {
+    public int id { get; set; }
+    public FeedbackType FeedbackType { get; set; }
+    public UserView FromUser { get; set; }
+    public Training ToTraining {get;set;}
+    public Attendance ToAttendance {get;set;}
+    public TrainingRegistration ToTrainingRegistration { get; set; }
+    public UserView ToUser { get; set; }
+    public string message {get;set;}
+}

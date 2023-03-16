@@ -37,7 +37,18 @@ public class TrainingService : ITrainingService
     {
         if (roleId == "1")
         {
-            return _context.Training.Include(t => t.Status);
+            return _context.Training.Include(t => t.Status).Select(u => new TrainingViewAdmin
+            {
+                id = u.id,
+                description = u.description,
+                start = u.start,
+                end = u.end,
+                name = u.name,
+                Status = u.Status,
+                min_hours = u.min_hours,
+                NoTrainingRegistrations =0,
+                expired = u.end < DateTime.Now
+            });
         }
         else if (roleId == "2")
         {
@@ -60,7 +71,8 @@ public class TrainingService : ITrainingService
                 name = u.name,
                 Status = u.Status,
                 min_hours = u.min_hours,
-                NoTrainingRegistrations = u.TrainingRegistrations.Where(tr => tr.User.Team == team).Count()
+                NoTrainingRegistrations = u.TrainingRegistrations.Where(tr => tr.User.Team == team).Count(),
+                expired = u.end < DateTime.Now
             });
         }
         else if (roleId == "3")
@@ -74,7 +86,8 @@ public class TrainingService : ITrainingService
                 name = u.name,
                 Status = u.Status,
                 min_hours = u.min_hours,
-                NoTrainingRegistrations = u.TrainingRegistrations.Count()
+                NoTrainingRegistrations = u.TrainingRegistrations.Count(),
+                expired = u.end < DateTime.Now
             });
         } else {
              throw new AppException("Invalid role/team");

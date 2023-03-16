@@ -100,12 +100,21 @@ public class TrainingRegistrationController : ControllerBase
         return Ok(new { message = "Training registration updated" });
     }
 
-    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHrOrManager")]
+    [Authorize(AuthenticationSchemes = "CustomScheme")]
     [Route("training-registration/{id}")]  
     [HttpDelete]
     public IActionResult Delete(int id)
     {
-        _trainingRegistrationService.Delete(id);
+        string roleId = User.FindFirstValue("role_id");
+        string teamId = User.FindFirstValue("team_id");
+        int userId = -1;
+        try {
+        userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        }
+        catch {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Could not identify user." });
+        }
+        _trainingRegistrationService.Delete(userId, roleId, teamId, id);
         return Ok(new { message = "Training registration deleted" });
     }
 

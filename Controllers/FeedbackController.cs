@@ -21,12 +21,21 @@ public class FeedbackController : ControllerBase
         _feedbackService = feedbackService;
         _mapper = mapper;
     }
-    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
+    [Authorize(AuthenticationSchemes = "CustomScheme")]
     [Route("feedback")]
     [HttpGet]
-    public IActionResult GetAll([FromQuery] bool expand = false)
+    public IActionResult GetAll([FromQuery] int type_id, [FromQuery] int from_user_id, [FromQuery] int to_training_id, [FromQuery] int to_attendance_id, [FromQuery] int to_training_registration_id, [FromQuery] int to_user_id)
     {
-        var feedbacks = _feedbackService.GetAll(expand);
+        string roleId = User.FindFirstValue("role_id");
+        string teamId = User.FindFirstValue("team_id");
+        int userId = -1;
+        try {
+        userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        }
+        catch {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Could not identify user." });
+        }
+        var feedbacks = _feedbackService.GetAll(userId, roleId, teamId, type_id, from_user_id, to_training_id, to_attendance_id, to_training_registration_id, to_user_id);
         return Ok(feedbacks);
     }
     [Authorize(AuthenticationSchemes = "CustomScheme")]
