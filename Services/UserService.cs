@@ -15,7 +15,7 @@ public interface IUserService
     User GetByToken(string Token);
     User Login(LoginRequest model);
     User LoginByToken(string Token);
-    UserView GetById(int id, bool expand = false);
+    UserView GetById(string roleId, string teamId, int id, bool expand = false);
     IEnumerable<Role> GetRoleList();
     void Create(RegisterRequest model);
     void Update(int id, UpdateRequest model);
@@ -98,8 +98,20 @@ public class UserService : IUserService
             });
     }
 
-    public UserView GetById(int id, bool expand = false)
+    public UserView GetById(string roleId, string teamId, int id, bool expand = false)
     {
+        Team rTeam = null;
+        if(roleId == "2") {
+            if (teamId == null) throw new KeyNotFoundException("Invalid teamid.");
+            try
+            {
+                rTeam = _sharedService.GetTeam(Byte.Parse(teamId));
+            }
+            catch
+            {
+                throw new KeyNotFoundException("Invalid teamid.");
+            }
+        }
         User u = _sharedService.GetUser(id);
         if (expand == true)
         {
@@ -113,6 +125,7 @@ public class UserService : IUserService
             {
 
             }
+            if(roleId == "2" && rTeam != t) throw new AppException("You don't have access to this resource.");
             return new UserViewExpand
             {
                 id = u.id,
@@ -126,6 +139,17 @@ public class UserService : IUserService
         }
         else
         {
+            Team t = null;
+            Role r = _sharedService.GetRole(u.role_id);
+            try
+            {
+                t = _sharedService.GetTeam(u.team_id);
+            }
+            catch
+            {
+
+            }
+            if(roleId == "2" && rTeam != t) throw new AppException("You don't have access to this resource.");
             return new UserView
             {
                 id = u.id,

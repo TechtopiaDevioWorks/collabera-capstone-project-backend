@@ -121,6 +121,7 @@ public class TrainingRegistrationController : ControllerBase
     [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHrOrManager")]
     [Route("training-history/{id}")]
     [HttpGet()]
+    [EnableQuery()]
     public IActionResult GetUserTrainingHistory([FromRoute] int id)
     {
         var trainingHistory = _trainingRegistrationService.GetUserTrainingHistory(id);
@@ -130,6 +131,7 @@ public class TrainingRegistrationController : ControllerBase
     [Authorize(AuthenticationSchemes = "CustomScheme")]
     [Route("training-history")]
     [HttpGet()]
+    [EnableQuery()]
     public IActionResult GetUserTrainingHistoryPersonal()
     {
         int userId = -1;

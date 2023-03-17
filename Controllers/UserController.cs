@@ -55,12 +55,14 @@ public class UserController : ControllerBase
     }
 
 
-    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHR")]
+    [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHRorManager")]
     [Route("user/{id}")]
     [HttpGet()]
     public IActionResult GetById([FromRoute] int id, [FromQuery] bool expand = false)
     {
-        var user = _userService.GetById(id, expand);
+        string roleId = User.FindFirstValue("role_id");
+        string teamId = User.FindFirstValue("team_id");
+        var user = _userService.GetById(roleId,teamId, id, expand);
         return Ok(user);
     }
 

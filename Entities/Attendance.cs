@@ -24,3 +24,18 @@ public class Attendance
     public byte status_id { get; set; }
     public AttendanceStatus Status { get; set; }
 }
+
+public class AttendanceView {
+    public int id { get; set; }
+    public int user_id { get; set; }
+    public int training_id { get; set; }
+    public DateTime start { get; set; }
+    public DateTime end { get; set; }
+    public byte status_id { get; set; }
+}
+
+public class AttendanceViewMax : AttendanceView {
+    public UserView User { get; set; }
+    public Training Training { get; set; }
+    public AttendanceStatus Status { get; set; }
+}

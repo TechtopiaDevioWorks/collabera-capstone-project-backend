@@ -47,7 +47,7 @@ public class TrainingService : ITrainingService
                 Status = u.Status,
                 min_hours = u.min_hours,
                 NoTrainingRegistrations =0,
-                expired = u.end < DateTime.Now
+                expired = u.end.Date < DateTime.Now.Date
             });
         }
         else if (roleId == "2")
@@ -72,7 +72,7 @@ public class TrainingService : ITrainingService
                 Status = u.Status,
                 min_hours = u.min_hours,
                 NoTrainingRegistrations = u.TrainingRegistrations.Where(tr => tr.User.Team == team).Count(),
-                expired = u.end < DateTime.Now
+                expired = u.end.Date < DateTime.Now.Date
             });
         }
         else if (roleId == "3")
@@ -87,7 +87,7 @@ public class TrainingService : ITrainingService
                 Status = u.Status,
                 min_hours = u.min_hours,
                 NoTrainingRegistrations = u.TrainingRegistrations.Count(),
-                expired = u.end < DateTime.Now
+                expired = u.end.Date < DateTime.Now.Date
             });
         } else {
              throw new AppException("Invalid role/team");

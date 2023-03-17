@@ -9,7 +9,7 @@ using AutoMapper;
 
 public interface IAttendanceService
 {
-    IEnumerable<Attendance> GetAll(Boolean expand = false);
+    IEnumerable<AttendanceView> GetAll(int currentUserId, string roleId, string teamId, int user_id, int training_id);
     void Create(CreateRequest model);
     Attendance GetById(int id);
     void Update(int id, UpdateRequest model);
@@ -30,12 +30,80 @@ public class AttendanceService : IAttendanceService
         _context = context;
         _mapper = mapper;
     }
-    public IEnumerable<Attendance> GetAll(Boolean expand = false)
+    public IEnumerable<AttendanceView> GetAll(int currentUserId, string roleId, string teamId, int user_id, int training_id)
     {
-        if (expand == true)
-            return _context.Attendance;
-        else
-            return _context.Attendance;
+        switch(roleId) {
+            case "1":
+                if(user_id == 0) user_id = currentUserId;
+                else if(user_id != currentUserId) throw new AppException("You don't have access to this resource.");
+                return _context.Attendance.Where(f => 
+                f.user_id == user_id &&
+                (training_id != 0 ? f.training_id == training_id: true))
+                .Include(f => f.User).Include(f => f.Training).Include(f => f.Status).Select(f => new  AttendanceViewMax{
+                    id=f.id,
+                    User = new UserView {id = f.User.id,
+                        username = f.User.username,
+                        firstname = f.User.firstname,
+                        lastname = f.User.lastname,
+                        email = f.User.email},
+                    Training = f.Training,
+                    Status = f.Status,
+                    start = f.start,
+                    end = f.end,
+                    user_id = f.user_id,
+                    training_id = f.training_id,
+                    status_id = f.status_id
+                });
+            case "2":
+                if (teamId == null) throw new KeyNotFoundException("Invalid teamid.");
+                Team team = null;
+                try
+                {
+                    team = _sharedService.GetTeam(Byte.Parse(teamId));
+                }
+                catch
+                {
+                    throw new KeyNotFoundException("Invalid teamid.");
+                }
+                return _context.Attendance.Where(f => 
+                (user_id != 0 ? f.user_id == user_id: true) &&
+                (training_id != 0 ? f.training_id == training_id: true))
+                .Include(f => f.User).Where(f => f.User.team_id == team.id).Include(f => f.Training).Include(f => f.Status).Select(f => new  AttendanceViewMax{
+                    id=f.id,
+                    User = new UserView {id = f.User.id,
+                        username = f.User.username,
+                        firstname = f.User.firstname,
+                        lastname = f.User.lastname,
+                        email = f.User.email},
+                    Training = f.Training,
+                    Status = f.Status,
+                    start = f.start,
+                    end = f.end,
+                    user_id = f.user_id,
+                    training_id = f.training_id,
+                    status_id = f.status_id
+                });
+            case "3":
+                return _context.Attendance.Where(f => 
+                (user_id != 0 ? f.user_id == user_id: true) &&
+                (training_id != 0 ? f.training_id == training_id: true))
+                .Include(f => f.User).Include(f => f.Training).Include(f => f.Status).Select(f => new  AttendanceViewMax{
+                    id=f.id,
+                    User = new UserView {id = f.User.id,
+                        username = f.User.username,
+                        firstname = f.User.firstname,
+                        lastname = f.User.lastname,
+                        email = f.User.email},
+                    Training = f.Training,
+                    Status = f.Status,
+                    start = f.start,
+                    end = f.end,
+                    user_id = f.user_id,
+                    training_id = f.training_id,
+                    status_id = f.status_id
+                });
+        }
+        throw new AppException("Role not found");
     }
 
     public void Create(CreateRequest model)

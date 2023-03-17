@@ -32,7 +32,7 @@ public class DateTimeAfterCurrentDateAttribute : ValidationAttribute
     {
         if(value == null) return ValidationResult.Success;
         var dateTime = (DateTime)value;
-        if (dateTime > DateTime.Now)
+        if (dateTime.Date >= DateTime.Now.Date)
         {
             return ValidationResult.Success;
         }

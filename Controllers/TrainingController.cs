@@ -37,12 +37,30 @@ public class TrainingController : ControllerBase
     [Authorize(AuthenticationSchemes = "CustomScheme")]
     [Route("training/count")]    
     [HttpGet]
-    [EnableQuery()]
     public IActionResult GetAllCount()
     {
         var trainingCount = _trainingService.GetAllCount();
         return Ok(trainingCount);
     }
+
+    [Authorize(AuthenticationSchemes = "CustomScheme")]
+    [Route("training-filtered/count")]
+    [HttpGet]
+    public async Task<IActionResult> GetAllCountFiltered(ODataQueryOptions<WebApi.Entities.Training> odataQueryOptions)
+    {
+        string roleId = User.FindFirstValue("role_id");
+        string teamId = User.FindFirstValue("team_id");
+
+        var queryable = _trainingService.GetAll(roleId, teamId, false).AsQueryable();
+        if(odataQueryOptions != null) {
+        var filteredQueryable = odataQueryOptions.Filter.ApplyTo(queryable, new ODataQuerySettings()) as IQueryable<WebApi.Entities.Training>;
+        var count = await Task.FromResult(filteredQueryable.Count());
+        return Ok(count);
+        }else{
+            return Ok(queryable.Count());
+        }
+    }
+
 
     [Authorize(AuthenticationSchemes = "CustomScheme", Policy = "isHr")]
     [Route("training")]  
