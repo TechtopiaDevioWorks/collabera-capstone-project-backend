@@ -12,7 +12,7 @@ public interface IUserService
 {
     IEnumerable<UserView> GetAll(Boolean expand = false);
     IEnumerable<UserView> GetAllTeam(string teamId, Boolean expand = false);
-    User GetByToken(string Token);
+    Task<User> GetByToken(string Token);
     User Login(LoginRequest model);
     User LoginByToken(string Token);
     UserView GetById(string roleId, string teamId, int id, bool expand = false);
@@ -161,9 +161,9 @@ public class UserService : IUserService
         }
     }
 
-    public User GetByToken(string Token)
+    public Task<User> GetByToken(string Token)
     {
-        var user = _context.User.Include(u => u.Role).Include(u => u.Team).Where(x => x.token == Token).FirstOrDefault();
+        var user = _context.User.Include(u => u.Role).Include(u => u.Team).Where(x => x.token == Token).FirstOrDefaultAsync();
         return user;
     }
 

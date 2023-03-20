@@ -30,7 +30,7 @@ public class CustomAuthenticationHandler : AuthenticationHandler<AuthenticationS
         }
 
         var token = authorizationHeader.ToString().Split(' ')[1];
-        var user = _userService.GetByToken(token);
+        var user = await _userService.GetByToken(token);
 
         if (user == null)
         {
@@ -84,25 +84,4 @@ public static class CustomPolicies
             );
     }).Build();
 
-    /* public static AuthorizationPolicy isHrOrPersonalData = new AuthorizationPolicyBuilder()
-         .RequireAuthenticatedUser()
-         .RequireClaim("role_id", "3")
-         .RequireAssertion(context => {
-             var httpContext = context.Resource as HttpContext;
-             Console.WriteLine("Enter assertion");
-             // Check if the httpContext is not null and contains the RouteData property
-             if (httpContext != null && httpContext.Items.ContainsKey("Microsoft.AspNetCore.Routing.RouteData"))
-             {
-                 Console.WriteLine("Enter assertion data");
-                 var routeData = httpContext.Items["Microsoft.AspNetCore.Routing.RouteData"] as RouteData;
-                 var claimValue = context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                 var routeParam = routeData.Values["id"].ToString();
-                 if(routeParam == null || claimValue == null) {
-                     return false;
-                 }
-                 return routeParam == claimValue;
-             }
-             else return false;
-         }).Build();
- */
 }
